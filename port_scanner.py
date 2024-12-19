@@ -20,12 +20,11 @@ def get_open_ports(target, port_range, verbose = False):
             return 'Error: Invalid hostname'
 
 
-    for port in range(*port_range):
+    for port in range(port_range[0], port_range[1] + 1):
         try:
             with socket.create_connection((target, port), timeout=0.1):
                 open_ports.append(port)
-        except (socket.timeout, ConnectionRefusedError, OSError) as e:
-            print(f"Error on port {port}: {e}")
+        except (socket.timeout, ConnectionRefusedError, OSError):
             pass
     
     if verbose:
@@ -58,5 +57,5 @@ def is_valid_ip(ip):
             return False
 
 
-example = get_open_ports("209.216.230.240", [440, 445], False)
-print(example)
+# example = get_open_ports("scanme.nmap.org", [20, 80], True)
+# print(example)
