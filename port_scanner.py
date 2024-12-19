@@ -4,19 +4,14 @@ from common_ports import ports_and_services
 
 def get_open_ports(target, port_range, verbose = False):
     open_ports = []
-    target_address = ''
 
-    pattern = r'^\d{1,3}(\.\d{1,3}){3}$'
-    if re.match(pattern, target):
-        if is_valid_ip(target):
-            target_address = 'ip'
-        else:
+    try:
+        host_data = socket.gethostbyname_ex(target)
+    except socket.gaierror:
+        pattern = r'^\d{1,3}(\.\d{1,3}){3}$'
+        if re.match(pattern, target):
             return 'Error: Invalid IP address'
-    else:
-        try:
-            ip_address = socket.gethostbyname(target)
-            target_address = 'hostname'
-        except:
+        else:
             return 'Error: Invalid hostname'
 
 
@@ -24,16 +19,16 @@ def get_open_ports(target, port_range, verbose = False):
         try:
             with socket.create_connection((target, port), timeout=0.1):
                 open_ports.append(port)
-        except (socket.timeout, ConnectionRefusedError, OSError):
+        except (socket.timeout, ConnectionRefusedError, OSError) as e:
             pass
     
     if verbose:
         descriptive_string = []
 
-        if target_address == 'ip':
-            descriptive_string.append(f'Open ports for {target}')
-        elif target_address == 'hostname':
-            descriptive_string.append(f'Open ports for {target} ({ip_address})')
+        if host_data[0] == host_data[2][0]:
+            descriptive_string.append(f'Open ports for {host_data[0]}')
+        else:
+            descriptive_string.append(f'Open ports for {host_data[0]} ({host_data[2][0]})')
 
         descriptive_string.append('\nPORT     SERVICE')
 
@@ -57,5 +52,5 @@ def is_valid_ip(ip):
             return False
 
 
-# example = get_open_ports("scanme.nmap.org", [20, 80], True)
+# example = get_open_ports("137.74.187.104", [440, 450], True)
 # print(example)

@@ -5,6 +5,8 @@ print("***Tests***")
 class UnitTests(unittest.TestCase):
     def test_port_scanner_ip(self):
         ports = port_scanner.get_open_ports("209.216.230.240", [440, 445], False)
+        # www.freecodecamp.org (resolved 104.26.2.33, 104.26.3.33, 172.67.70.149 ...)
+        ports = port_scanner.get_open_ports("www.freecodecamp.org", [440, 445], False)
         actual = ports
         expected = [443]
         self.assertEqual(actual, expected, 'Expected scanning ports of IP address to return [443].')
