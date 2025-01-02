@@ -6,9 +6,14 @@ def get_open_ports(target, port_range, verbose = False):
     open_ports = []
 
     try:
+        pattern = r'^\d{1,3}(\.\d{1,3}){3}$'
+        if re.match(pattern, target):
+            host_data = socket.gethostbyaddr(target)
+        else:
+            host_data = socket.gethostbyname_ex(target)
+    except socket.herror:
         host_data = socket.gethostbyname_ex(target)
     except socket.gaierror:
-        pattern = r'^\d{1,3}(\.\d{1,3}){3}$'
         if re.match(pattern, target):
             return 'Error: Invalid IP address'
         else:
@@ -16,7 +21,7 @@ def get_open_ports(target, port_range, verbose = False):
 
     for port in range(port_range[0], port_range[1] + 1):
         try:
-            with socket.create_connection((target, port), timeout=0.1):
+            with socket.create_connection((target, port), timeout=0.2):
                 open_ports.append(port)
         except (socket.timeout, ConnectionRefusedError, OSError) as e:
             pass
