@@ -14,7 +14,6 @@ def get_open_ports(target, port_range, verbose = False):
         else:
             return 'Error: Invalid hostname'
 
-
     for port in range(port_range[0], port_range[1] + 1):
         try:
             with socket.create_connection((target, port), timeout=0.1):
@@ -39,18 +38,3 @@ def get_open_ports(target, port_range, verbose = False):
         return ''.join(descriptive_string)
 
     return(open_ports)
-
-def is_valid_ip(ip):
-    try:
-        socket.inet_pton(socket.AF_INET, ip)
-        return True
-    except socket.error:
-        try:
-            socket.inet_pton(socket.AF_INET6, ip)
-            return True
-        except socket.error:
-            return False
-
-
-# example = get_open_ports("137.74.187.104", [440, 450], True)
-# print(example)
